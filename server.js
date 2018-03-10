@@ -7,7 +7,7 @@ const routes = require("./controllers/burgers_controller.js");
 
 // Set up Express App
 let app = express();
-let PORT = process.env.PORT || 3000;
+let PORT = process.env.PORT || 8080;
 
 // Serve static content for the app from the "public" directory in the application directory.
 app.use(express.static('public'));
@@ -22,7 +22,7 @@ app.use(bodyParser.json());
 app.use(path("_method"));
 
 // Set Handlebars
-app.emgine('handlebars', exphbs({ defaultLayout: 'main'}));
+app.engine('handlebars', exphbs({ defaultLayout: 'main'}));
 app.set('view engine', 'handlebars');
 
 // Connecting router

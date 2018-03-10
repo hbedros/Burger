@@ -1,22 +1,22 @@
 // Set up MySQL connection
-var mysql = require('mysql');
+const Mysql = require("mysql");
 
-var connection = mysql.creatConnection({
-    port: 3306,
-    host: 'localhost',
-    user: 'root',
-    password: '',
-    database: 'burgers_db'
-});
+// connection configuration
+let config;
 
-// Make connection
-conncetion.connect(function(err) {
-    if (err) {
-        console.error('error connecting: ' + err.stack);
-        return;
-    }
-    console.log('connected as id ' + connection.threadId);
-})
+// db connection config using JawsDB
+if (process.env.JAWSDB_URL) {
+	config = process.env.JAWSDB_URL;
+}
+else {
+	// default db config for local db
+	config = {
+		host: "localhost",
+		user: "root",
+		password: "gabig",
+		database: "burgers_db"
+	};
+}
 
-// Export connection for our ORM to use
-module.exports = connection;
+// export connection to burgers_db
+module.exports = Mysql.createConnection(config);

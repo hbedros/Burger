@@ -1,8 +1,7 @@
-INSERT INTO burgers (burger_name, devoured)
-VALUES ('Cheese Burger', TRUE);
+-- Queries to populate the burgers table with entries (at least 3)
+USE burgers_db;
 
 INSERT INTO burgers (burger_name, devoured)
-VALUES ('Chicken Burger', TRUE);
-
-INSERT INTO burgers (burger_name, devoured)
-VALUES ('Double Burger', TRUE);
+VALUES  ('The Waldorf', FALSE),
+        ('The Roadhouse', FALSE),
+        ('The Sheboygan', FALSE);
