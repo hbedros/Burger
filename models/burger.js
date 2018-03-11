@@ -1,41 +1,27 @@
-const ORM = require("../config/orm.js");
+// require in the orm file that will talk to the database
+var orm = require("../config/orm.js");
 
-// Gets all records from burgers table. Returns a promise.
-function getAllBurgers() {
-	return ORM.selectAll("burgers");
-}
-
-// Adds burger to burgers table. Returns a promise.
-function add(name, devoured = false) {
-
-	// container for error object
-	let err = false;
-	
-	// validate name
-	if ( name.length < 1 ) { 
-		err = new Error("Invalid burger name. Burger name must have at least one character.");
+// create the burger variable that will be exported back to the controller
+var burger = {
+	// selectAll for getting all the burgers
+	selectAll: function(cb) {
+		orm.selectAll('burgers', function(res) {
+			cb(res);
+		});
+	},
+	// insertOne for adding a new burger
+	insertOne: function(cols, vals, cb) {
+		orm.insertOne('burgers', cols, vals, function(res) {
+			cb(res);
+		});
+	},
+	// updateOne for changing the burger status
+	updateOne: function(objColVals, condition, cb) {
+		orm.updateOne('burgers', objColVals, condition, function(res) {
+			cb(res);
+		});
 	}
-
-	// object with keys corresponding to burgers table
-	let newBurger = {
-		burger_name: name,
-		devoured: devoured
-	};
-
-	// return a promise
-	return new Promise( (resolve, reject) => { 
-		if (err) { return reject(err); }
-		return ORM.insertOne( "burgers", newBurger).then(resolve);
-	});
-}
-
-// Updates information for a burger with matching unique id. Returns a promise.
-function devour(id) {
-	return ORM.updateOne("burgers", { id: id }, { devoured: true });
-}
-
-module.exports = {
-	getAllBurgers: getAllBurgers,
-	add: add,
-	devour: devour
 };
+
+// export burger back to the controller
+module.exports = burger;

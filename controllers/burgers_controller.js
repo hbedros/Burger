@@ -1,46 +1,45 @@
-// DEPENDENCIES
-const Express = require("express");
-const Burger = require("../models/burger.js");
+// require in express, and set up routing for it, and bring in
+// the burger.js model file
+const express = require('express');
+const router = express.Router();
+const burger = require('../models/burger.js');
 
-// ROUTE HANDLERS
-function addBurger(req, res) {
-	Burger.add(req.body.burger_name)
-		.then( () => { res.redirect("/"); })
-		.catch( (reason) => {
-		
-			res.redirect("/");
-		});		
-}
+// add a '/' endpoint that redirects to the /index route
+router.get('/', function(req, res) {
+	res.redirect('/index');
+});
 
-// Handles a put request to devour a burger and redirects to root.
-function devourBurger(req, res) {
-	Burger.devour(req.params.id)
-		.then( () => { res.redirect("/"); } )
-		.catch( (reason) => { throw reason; } );
-}
+// add a '/index/' endpoint that gets all the burgers
+// then renders the index file by passing in all the burgers
+// as an object for handlebars to use
+router.get('/index', function(req, res) {
+	burger.selectAll(function(data) {
+		var hbsObject = {burgers: data};
+		console.log(hbsObject);
+		res.render('index', hbsObject);
+	});
+});
 
-// Displays the main page including burgers and add burger form
-function renderMain(response) {
-	Burger.getAllBurgers()
-		.then((burgers) => {
+// add a '/burgers/insertOne' endpoint that posts the 
+// burger name the user entered then as a callback it
+// redirects back to the /index route
+router.post('/burgers/insertOne', function(req, res) {
+	burger.insertOne(['burger_name', 'devoured'], [req.body.name, false], function() {
+		res.redirect('/index');
+	});
+});
 
-			// render the page
-			response.render("index", { burgers: burgers });
-		});
-}
+// add a '/burgers/updateOne/:id' route that updates
+// the status of the burger from being uneaten to eaten
+// then does a callback that redirects to the /index endpoint
+router.put('/burgers/updateOne/:id', function(req, res) {
+	var condition = 'id = ' + req.params.id;
+	console.log('condition', condition);
 
+	burger.updateOne({devoured: req.body.devoured}, condition, function() {
+		res.redirect('/index');
+	});
+});
 
-// ROUTING
-let router = Express.Router();
-
-// main vie
-router.get("/", (req, res) => { renderMain(res); });
-
-// add burger
-router.post("/", addBurger);
-
-// devour api
-router.put("/:id", devourBurger);
-
-// export router
+// export the router (controller) back to the server
 module.exports = router;
