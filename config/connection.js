@@ -16,13 +16,13 @@ if (process.env.JAWSDB_URL) {
 	});
 };
 
-connection.connect(function(err) {
-	if (err) {
-		console.error('error conencting: ' + err.stack);
-		return;
-	}
-	console.log('connected as id ' + connection.threadId);
-});
+// connection.connect(function(err) {
+// 	if (err) {
+// 		console.error('error conencting: ' + err.stack);
+// 		return;
+// 	}
+// 	console.log('connected as id ' + connection.threadId);
+// });
 
 // export connection to burgers_db
 module.exports = connection;
