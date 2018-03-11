@@ -1,56 +1,81 @@
-// Import MySQL connection
-const connection = require("./connection.js");
+// import in the connection to the database
+var connection = require('../config/connection.js');
 
-// Query to select all data in table. Returns a promise passing for the selected data.
-function selectAll(table) {
-	// create a promise
-	return new Promise( ( resolve, reject ) => {
-		let sql = "SELECT * FROM ??";
+// a function that will be used to build queries
+function printQuestionMarks(num) {
+	var arr = [];
 
-		// run query to get all data in table
-		connection.query( sql, table, ( err, data ) => {
+	for (var i = 0; i < num; i++) {
+		arr.push('?');
+	}
 
-			// run rejection callback on error
-			if(err) return reject(err);
-
-			// pass data to success callback
-			return resolve(data);
-		});
-	} );
+	return arr.toString();
 }
 
-// Query to add a burger to the burgers table passing OkPacket data object
-function insertOne(table, data) {
-	return new Promise( ( resolve, reject ) => {
+// another function for building queries
+function objToSql(ob) {
+	var arr = [];
 
-		// initialize sql statement
-		let sql = "INSERT INTO ?? SET ?";
+	for (var key in ob) {
+		if (ob.hasOwnProperty(key)) {
+			arr.push(key + '=' + ob[key]);
+		}
+	}
 
-		// run query to get all data in table
-		Connection.query( sql, [table, data], ( err, data ) => {
-			if(err) return reject(err);
-			return resolve(data);
-		});
-	} );
+	return arr.toString();
 }
 
-// Query to update the first record found that satisfies a given crieteria. 
-function updateOne(table, where, data) {
-	return new Promise( ( resolve, reject ) => {
-		
-		// initialize sql statement
-		let sql = "UPDATE ?? SET ? WHERE ? LIMIT 1";
-
-		// run query to get all data in table
-		Connection.query( sql, [table, data, where], ( err, data ) => {
-			if(err) return reject(err);
-			return resolve(data);
+// define our orm that will be exported to the burgers.js model
+var orm = {
+	// selectAll function for grabbing everything from the table
+	selectAll: function(tableInput, cb) {
+		var queryString = 'SELECT * FROM ' + tableInput + ';';
+		connection.query(queryString, function(err, result) {
+			if (err) throw err;
+			// send the query result back to the callback function
+			cb(result);
 		});
-	} );
-}
+	},
+	// insertOne function for inserting one burger into table
+	insertOne: function(table, cols, vals, cb) {
+		var queryString = 'INSERT INTO ' + table;
 
-module.exports = {
-	selectAll: selectAll,
-	insertOne: insertOne,
-	updateOne: updateOne
+		queryString += ' (';
+		queryString += cols.toString();
+		queryString += ') ';
+		queryString += 'VALUES (';
+		// queryString += vals[0] + ' , ' + vals[1];
+		queryString += printQuestionMarks(vals.length);
+		queryString += ') ';
+
+		console.log(queryString);
+		console.log(vals);
+
+		connection.query(queryString, vals, function(err, result) {
+			if (err) throw err;
+			// send the query result back to the callback function
+			cb(result);
+		});
+	},
+
+	// update one function for changing a burger status
+	updateOne: function(table, objColVals, condition, cb) {
+		var queryString = 'UPDATE ' + table;
+
+		queryString += ' SET ';
+		queryString += objToSql(objColVals);
+		queryString += ' WHERE ';
+		queryString += condition;
+
+		console.log(queryString);
+
+		connection.query(queryString, function(err, result) {
+			if (err) throw err;
+			// send the query result back to the callback function
+			cb(result);
+		});
+	}
 };
+
+// export the orm back to the model burger.js
+module.exports = orm;

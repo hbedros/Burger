@@ -1,6 +1,6 @@
 // DEPENDENCIES
 const Express = require("express");
-const Burger = require("../models/burger.js"); // model
+const Burger = require("../models/burger.js");
 
 // ROUTE HANDLERS
 function addBurger(req, res) {
