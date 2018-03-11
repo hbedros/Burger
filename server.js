@@ -13,7 +13,7 @@ let PORT = process.env.PORT || 8080;
 app.use(express.static('public'));
 
 // Parse application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: true }));
 
 // Parse application/json
 app.use(bodyParser.json());
