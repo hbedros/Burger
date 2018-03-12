@@ -1,8 +1,7 @@
 // Set up MySQL connection
 const mysql = require("mysql");
-
+require('dotenv').config();
 var connection;
-
 
 // db connection config using JawsDB
 if (process.env.JAWSDB_URL) {
@@ -10,10 +9,12 @@ if (process.env.JAWSDB_URL) {
 } else {
 	// default db config for local db
 	connection = mysql.createConnection({
-		host: "localhost",
-		user: "root",
-		password: process.env.PASSWORD,
+
+		host:'localhost',
+		user:'root',
+		password: process.env.DB_PASS,
 		database: "burgers_db"
+
 	});
 };
 
