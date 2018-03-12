@@ -27,4 +27,5 @@ if (process.env.JAWSDB_URL) {
 // });
 
 // export connection to burgers_db
+connection.connect();
 module.exports = connection;
